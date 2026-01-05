@@ -3,16 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { 
   Search, 
-  SlidersHorizontal,
   Grid3X3, 
   List, 
   Building2,
   Tag,
   MessageSquare,
-  Calendar,
   ChevronDown,
-  X,
-  Filter
+  X
 } from 'lucide-react'
 import { Layout } from '../components/Layout'
 import { Card, Badge, Button } from '../components/UI'

@@ -13,11 +13,9 @@ import {
   X,
   FileAudio,
   Wand2,
-  Copy,
   Clock,
   Building2,
   Tag,
-  AlertCircle,
   ChevronDown
 } from 'lucide-react'
 import { Layout } from '../components/Layout'

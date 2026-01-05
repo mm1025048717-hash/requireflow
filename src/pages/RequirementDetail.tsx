@@ -2,7 +2,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { 
   ArrowLeft, 
-  Clock, 
   User, 
   Building2, 
   Tag, 

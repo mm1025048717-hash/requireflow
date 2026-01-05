@@ -1,5 +1,5 @@
 import { ReactNode, ButtonHTMLAttributes, forwardRef } from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   children: ReactNode

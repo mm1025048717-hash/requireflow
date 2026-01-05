@@ -4,8 +4,6 @@ import {
   BarChart3, 
   TrendingUp, 
   PieChart, 
-  Calendar,
-  ChevronDown,
   Download,
   RefreshCw,
   ArrowUp,

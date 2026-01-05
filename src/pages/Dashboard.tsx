@@ -18,16 +18,9 @@ import { Card, Badge, Button } from '../components/UI'
 import { 
   mockRequirements, 
   mockCustomers,
-  statusLabels,
-  priorityLabels 
+  statusLabels
 } from '../data/mockData'
 import type { Priority, RequirementStatus } from '../types'
-
-// 动画配置
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-}
 
 const stagger = {
   animate: {

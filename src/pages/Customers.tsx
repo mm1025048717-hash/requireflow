@@ -8,11 +8,6 @@ import {
   TrendingUp,
   MoreHorizontal,
   Star,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  ExternalLink,
   Filter
 } from 'lucide-react'
 import { Layout } from '../components/Layout'
