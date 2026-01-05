@@ -1,7 +1,16 @@
 import { ReactNode, ButtonHTMLAttributes, forwardRef } from 'react'
 import { motion } from 'framer-motion'
 
-interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
+interface ButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>, 
+  'className' | 
+  'onAnimationStart' | 
+  'onAnimationEnd' | 
+  'onAnimationIteration' |
+  'onDragStart' |
+  'onDrag' |
+  'onDragEnd'
+> {
   children: ReactNode
   variant?: 'primary' | 'secondary' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
