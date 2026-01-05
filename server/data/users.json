@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "name": "张三",
+    "email": "zhangsan@company.com",
+    "role": "product_manager",
+    "department": "产品部",
+    "createdAt": "2025-12-31T07:17:50.189Z"
+  },
+  {
+    "id": "2",
+    "name": "李四",
+    "email": "lisi@company.com",
+    "role": "sales",
+    "department": "销售部",
+    "createdAt": "2025-12-31T07:17:50.189Z"
+  },
+  {
+    "id": "3",
+    "name": "王五",
+    "email": "wangwu@company.com",
+    "role": "implementation",
+    "department": "实施部",
+    "createdAt": "2025-12-31T07:17:50.189Z"
+  }
+]
