@@ -9,7 +9,13 @@ import {
   Tag,
   MessageSquare,
   ChevronDown,
-  X
+  X,
+  Plus,
+  Upload,
+  Settings,
+  Star,
+  RefreshCw,
+  Eye
 } from 'lucide-react'
 import { Layout } from '../components/Layout'
 import { Card, Badge, Button } from '../components/UI'
@@ -21,6 +27,7 @@ import {
   sourceCategoryLabels
 } from '../data/mockData'
 import type { Requirement, Priority, RequirementStatus } from '../types'
+import { format } from 'date-fns'
 
 type ViewMode = 'card' | 'table'
 
@@ -192,11 +199,49 @@ function RequirementCard({ requirement }: { requirement: Requirement }) {
   )
 }
 
+// 星级评分组件
+function StarRating({ score }: { score: number }) {
+  const fullStars = Math.floor(score / 20)
+  const hasHalfStar = (score % 20) >= 10
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
+
+  return (
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: fullStars }).map((_, i) => (
+        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+      ))}
+      {hasHalfStar && (
+        <Star className="w-4 h-4 fill-yellow-400/50 text-yellow-400" />
+      )}
+      {Array.from({ length: emptyStars }).map((_, i) => (
+        <Star key={i + fullStars + (hasHalfStar ? 1 : 0)} className="w-4 h-4 fill-gray-200 text-gray-200" />
+      ))}
+    </div>
+  )
+}
+
+// 状态图标
+function StatusIcon({ status }: { status: RequirementStatus }) {
+  const icons = {
+    pending_review: '⏳',
+    planned: '🔄',
+    developing: '🔄',
+    testing: '🔄',
+    released: '✅',
+    rejected: '❌',
+    merged: '✅'
+  }
+  return <span className="text-base">{icons[status]}</span>
+}
+
 // 需求表格行
 function RequirementRow({ requirement, index }: { requirement: Requirement; index: number }) {
   const navigate = useNavigate()
-  const date = new Date(requirement.createdAt)
-  const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`
+  const date = requirement.aiAssessment?.assessedAt 
+    ? new Date(requirement.aiAssessment.assessedAt)
+    : new Date(requirement.createdAt)
+  const formattedDate = format(date, 'yyyy-MM-dd')
+  const overallScore = requirement.aiAssessment?.overallScore || 0
 
   return (
     <motion.tr
@@ -209,42 +254,60 @@ function RequirementRow({ requirement, index }: { requirement: Requirement; inde
     >
       <td className="py-4 px-5">
         <div className="flex items-center gap-3">
-          <Badge variant={priorityColors[requirement.priority]} size="sm" className="font-bold shrink-0">
-            {requirement.priority}
-          </Badge>
+          <StatusIcon status={requirement.status} />
           <div className="min-w-0">
             <div className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-              {requirement.title}
-            </div>
-            <div className="text-xs text-gray-400 truncate max-w-md mt-0.5">
-              {requirement.description}
+              {requirement.id.toUpperCase()}
             </div>
           </div>
+        </div>
+      </td>
+      <td className="py-4 px-4">
+        <div className="text-sm font-semibold text-gray-900 truncate max-w-xs">
+          {requirement.title}
         </div>
       </td>
       <td className="py-4 px-4">
         <span className="text-sm text-gray-700 font-medium">{requirement.customerName}</span>
       </td>
       <td className="py-4 px-4">
-        <span className="text-sm text-gray-600">{moduleLabels[requirement.module]}</span>
+        <div className="flex flex-col gap-1">
+          {overallScore > 0 ? (
+            <>
+              <StarRating score={overallScore} />
+              <span className="text-xs text-gray-500">{overallScore}分</span>
+            </>
+          ) : (
+            <span className="text-xs text-gray-400">未评估</span>
+          )}
+        </div>
       </td>
       <td className="py-4 px-4">
-        <Badge variant={statusColors[requirement.status]} size="sm" dot>
-          {statusLabels[requirement.status]}
-        </Badge>
+        <span className="text-xs text-gray-500">{formattedDate}</span>
       </td>
       <td className="py-4 px-4">
-        <span className="text-sm text-gray-500">{sourceCategoryLabels[requirement.source.category]}</span>
-      </td>
-      <td className="py-4 px-4">
-        <span className="text-sm text-gray-400">{formattedDate}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/requirements/${requirement.id}`)
+          }}
+        >
+          <Eye className="w-4 h-4 mr-1" />
+          查看
+        </Button>
       </td>
     </motion.tr>
   )
 }
 
+type ViewType = 'list' | 'matrix' | 'report'
+
 export default function RequirementList() {
+  const navigate = useNavigate()
   const [viewMode, setViewMode] = useState<ViewMode>('card')
+  const [viewType, setViewType] = useState<ViewType>('list')
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('')
@@ -270,19 +333,45 @@ export default function RequirementList() {
     setModuleFilter('')
   }
 
+  // 处理视图切换
+  const handleViewTypeChange = (type: ViewType) => {
+    setViewType(type)
+    if (type === 'matrix') {
+      navigate('/requirements/matrix')
+    } else if (type === 'report') {
+      // TODO: 实现报告视图
+      console.log('报告视图待实现')
+    }
+  }
+
   return (
-    <Layout title="需求池" subtitle={`共 ${mockRequirements.length} 条需求`}>
-      {/* Toolbar */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-card p-4 mb-6">
-        <div className="flex items-center justify-between gap-4">
-          {/* Left: Search & Filters */}
-          <div className="flex items-center gap-3 flex-1">
-            {/* Search */}
+    <Layout title="需求池" subtitle="AI需求优先级决策助手">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-900">需求池</h1>
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" size="sm" icon={<Plus className="w-4 h-4" />}>
+              新增评估
+            </Button>
+            <Button variant="secondary" size="sm" icon={<Upload className="w-4 h-4" />}>
+              导入反馈
+            </Button>
+            <Button variant="ghost" size="sm" icon={<Settings className="w-4 h-4" />}>
+              调整模型
+            </Button>
+          </div>
+        </div>
+
+        {/* Toolbar */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-card p-4">
+          <div className="flex items-center justify-between gap-4">
+            {/* Left: Search */}
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="搜索需求标题、描述、客户..."
+                placeholder="搜索..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-lg text-sm placeholder-gray-400
@@ -290,101 +379,60 @@ export default function RequirementList() {
               />
             </div>
 
-            {/* Filter Dropdowns */}
-            <FilterDropdown
-              label="状态"
-              options={Object.entries(statusLabels).map(([value, label]) => ({ value, label }))}
-              value={statusFilter}
-              onChange={setStatusFilter}
-            />
-            <FilterDropdown
-              label="优先级"
-              options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))}
-              value={priorityFilter}
-              onChange={setPriorityFilter}
-            />
-            <FilterDropdown
-              label="模块"
-              options={Object.entries(moduleLabels).map(([value, label]) => ({ value, label }))}
-              value={moduleFilter}
-              onChange={setModuleFilter}
-            />
-          </div>
-
-          {/* Right: View Toggle */}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode('card')}
-              className={`p-2 rounded-md transition-all ${
-                viewMode === 'card' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`p-2 rounded-md transition-all ${
-                viewMode === 'table' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <List className="w-4 h-4" />
-            </button>
+            {/* Right: View Toggle */}
+            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => handleViewTypeChange('list')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewType === 'list' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                列表视图
+              </button>
+              <button
+                onClick={() => handleViewTypeChange('matrix')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewType === 'matrix' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                矩阵视图
+              </button>
+              <button
+                onClick={() => handleViewTypeChange('report')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewType === 'report' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                报告视图
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Active Filters */}
-        {activeFilters.length > 0 && (
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-            <span className="text-xs text-gray-500 font-medium">已筛选：</span>
-            {statusFilter && (
-              <FilterTag label={statusLabels[statusFilter as RequirementStatus]} onRemove={() => setStatusFilter('')} />
-            )}
-            {priorityFilter && (
-              <FilterTag label={priorityLabels[priorityFilter as Priority]} onRemove={() => setPriorityFilter('')} />
-            )}
-            {moduleFilter && (
-              <FilterTag label={moduleLabels[moduleFilter]} onRemove={() => setModuleFilter('')} />
-            )}
-            <button onClick={clearAllFilters} className="text-xs text-gray-400 hover:text-gray-600 ml-2">
-              清除全部
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* Results */}
-      {filteredRequirements.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-white rounded-xl border border-gray-100 shadow-card p-16 text-center"
-        >
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search className="w-8 h-8 text-gray-400" />
+      {/* Content */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-card">
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold text-gray-900">需求列表</h2>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" icon={<RefreshCw className="w-4 h-4" />}>
+                刷新评估
+              </Button>
+            </div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">没有找到相关需求</h3>
-          <p className="text-sm text-gray-500 mb-4">尝试调整搜索关键词或筛选条件</p>
-          <Button variant="secondary" onClick={clearAllFilters}>清除筛选</Button>
-        </motion.div>
-      ) : viewMode === 'card' ? (
-        <motion.div layout className="grid grid-cols-3 gap-5">
-          <AnimatePresence mode="popLayout">
-            {filteredRequirements.map((req) => (
-              <RequirementCard key={req.id} requirement={req} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      ) : (
-        <Card padding="none">
+        </div>
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">需求</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">客户</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">模块</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">来源</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">时间</th>
+                <th className="py-3 px-5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">需求ID</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">需求标题</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">提出人</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">综合分</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">评估时间</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -393,8 +441,8 @@ export default function RequirementList() {
               ))}
             </tbody>
           </table>
-        </Card>
-      )}
+        </div>
+      </div>
 
       {/* Stats */}
       <div className="flex items-center justify-between mt-6 text-sm text-gray-500">

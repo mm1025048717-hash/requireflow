@@ -120,6 +120,35 @@ export interface Comment {
   createdAt: string
 }
 
+// AI评分维度
+export interface AIScoreDimensions {
+  userValue: number      // 用户价值 1-10
+  businessValue: number  // 商业价值 1-10
+  implementationCost: number // 实现成本 1-10 (成本越高分数越低)
+  strategicAlignment: number // 战略契合度 1-10
+  urgency: number        // 紧急程度 1-10
+}
+
+// AI分析依据
+export interface AIAnalysisBasis {
+  relatedGoals?: string[]        // 关联目标
+  historicalReferences?: string[] // 历史参考案例
+  externalData?: string[]         // 外部信息（竞品数据等）
+  dataPoints?: string[]           // 数据点
+}
+
+// AI评估结果
+export interface AIAssessment {
+  overallScore: number            // 综合得分 0-100
+  scoreDimensions: AIScoreDimensions // 各维度分数
+  priority: Priority              // AI建议优先级
+  suggestedSchedule?: string      // 建议排期
+  expectedImpact?: string         // 预计影响
+  confidenceLevel: number         // 信心指数 0-100
+  analysisBasis?: AIAnalysisBasis // 分析依据
+  assessedAt?: string             // 评估时间
+}
+
 // 需求卡片
 export interface Requirement {
   id: string
@@ -144,6 +173,9 @@ export interface Requirement {
   customerUrgency: 'urgent' | 'important' | 'normal' | 'low'
   businessValue: number // 1-10
   frequency: number // 出现频次
+  
+  // AI评估
+  aiAssessment?: AIAssessment
   
   // 状态
   status: RequirementStatus
@@ -188,5 +220,8 @@ export interface RequirementSort {
   field: 'createdAt' | 'updatedAt' | 'priority' | 'businessValue'
   order: 'asc' | 'desc'
 }
+
+
+
 
 

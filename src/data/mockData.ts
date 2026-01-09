@@ -130,7 +130,27 @@ export const mockRequirements: Requirement[] = [
     ],
     createdAt: '2024-12-28T14:30:00',
     updatedAt: '2024-12-29T10:00:00',
-    plannedVersion: 'v2.5.0'
+    plannedVersion: 'v2.5.0',
+    aiAssessment: {
+      overallScore: 75,
+      scoreDimensions: {
+        userValue: 8,
+        businessValue: 9,
+        implementationCost: 7,
+        strategicAlignment: 8,
+        urgency: 7
+      },
+      priority: 'P1',
+      suggestedSchedule: '下一迭代',
+      expectedImpact: '提升用户查询效率，减少手动计算工作量',
+      confidenceLevel: 80,
+      analysisBasis: {
+        relatedGoals: ['提升用户体验', '增强核心功能'],
+        historicalReferences: ['类似时间计算功能平均提升效率30%'],
+        dataPoints: ['出现频次15次', '涉及3个不同客户']
+      },
+      assessedAt: '2024-12-29T09:00:00'
+    }
   },
   {
     id: 'r2',
@@ -158,7 +178,27 @@ export const mockRequirements: Requirement[] = [
     linkedRequirements: [],
     comments: [],
     createdAt: '2024-12-25T21:30:00',
-    updatedAt: '2024-12-25T21:30:00'
+    updatedAt: '2024-12-25T21:30:00',
+    aiAssessment: {
+      overallScore: 70,
+      scoreDimensions: {
+        userValue: 8,
+        businessValue: 8,
+        implementationCost: 5,
+        strategicAlignment: 9,
+        urgency: 6
+      },
+      priority: 'P1',
+      suggestedSchedule: 'Q1规划',
+      expectedImpact: '提升管理层使用频率，增强产品竞争力',
+      confidenceLevel: 75,
+      analysisBasis: {
+        relatedGoals: ['移动化战略', '提升用户体验'],
+        historicalReferences: ['移动端功能平均提升用户活跃度25%'],
+        externalData: ['竞品均提供移动端支持']
+      },
+      assessedAt: '2024-12-26T10:00:00'
+    }
   },
   {
     id: 'r3',
@@ -195,7 +235,26 @@ export const mockRequirements: Requirement[] = [
     ],
     createdAt: '2024-12-27T16:00:00',
     updatedAt: '2024-12-28T09:00:00',
-    plannedVersion: 'v2.4.2'
+    plannedVersion: 'v2.4.2',
+    aiAssessment: {
+      overallScore: 65,
+      scoreDimensions: {
+        userValue: 7,
+        businessValue: 6,
+        implementationCost: 8,
+        strategicAlignment: 6,
+        urgency: 5
+      },
+      priority: 'P2',
+      suggestedSchedule: '本周迭代',
+      expectedImpact: '减少用户二次处理时间，提升满意度',
+      confidenceLevel: 82,
+      analysisBasis: {
+        relatedGoals: ['体验优化'],
+        historicalReferences: ['类似导出优化平均减少用户操作时间50%']
+      },
+      assessedAt: '2024-12-28T08:00:00'
+    }
   },
   {
     id: 'r4',
@@ -232,7 +291,28 @@ export const mockRequirements: Requirement[] = [
     ],
     createdAt: '2024-12-29T08:00:00',
     updatedAt: '2024-12-29T08:30:00',
-    plannedVersion: 'v2.4.1'
+    plannedVersion: 'v2.4.1',
+    aiAssessment: {
+      overallScore: 85,
+      scoreDimensions: {
+        userValue: 9,
+        businessValue: 9,
+        implementationCost: 7,
+        strategicAlignment: 10,
+        urgency: 9
+      },
+      priority: 'P0',
+      suggestedSchedule: '紧急修复',
+      expectedImpact: '核心功能缺失，修复后可提升查询成功率15%',
+      confidenceLevel: 90,
+      analysisBasis: {
+        relatedGoals: ['提升留存', '修复核心缺陷'],
+        historicalReferences: ['类似时间理解修复平均提升留存2%'],
+        externalData: ['竞品A启动速度领先我们15%'],
+        dataPoints: ['过去一周47次查询失败', '涉及8个不同客户']
+      },
+      assessedAt: '2024-12-29T08:15:00'
+    }
   },
   {
     id: 'r5',
@@ -298,7 +378,27 @@ export const mockRequirements: Requirement[] = [
     ],
     createdAt: '2024-12-22T15:00:00',
     updatedAt: '2024-12-23T09:00:00',
-    plannedVersion: 'v2.5.0'
+    plannedVersion: 'v2.5.0',
+    aiAssessment: {
+      overallScore: 88,
+      scoreDimensions: {
+        userValue: 10,
+        businessValue: 10,
+        implementationCost: 4,
+        strategicAlignment: 10,
+        urgency: 10
+      },
+      priority: 'P0',
+      suggestedSchedule: '紧急处理',
+      expectedImpact: '续约关键条件，直接影响续约率',
+      confidenceLevel: 95,
+      analysisBasis: {
+        relatedGoals: ['客户续约', '产品推广'],
+        historicalReferences: ['类似权限需求是续约必要条件的案例'],
+        dataPoints: ['续约客户明确表达', '涉及3000+门店']
+      },
+      assessedAt: '2024-12-23T08:00:00'
+    }
   },
   {
     id: 'r7',
@@ -532,5 +632,8 @@ export const sourceCategoryLabels: Record<string, string> = {
   offline: '线下',
   backend: '后台数据'
 }
+
+
+
 
 

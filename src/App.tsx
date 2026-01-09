@@ -6,7 +6,8 @@ import {
   CreateRequirement, 
   Analytics,
   Customers,
-  Settings
+  Settings,
+  MatrixView
 } from './pages'
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/requirements" element={<RequirementList />} />
+      <Route path="/requirements/matrix" element={<MatrixView />} />
       <Route path="/requirements/:id" element={<RequirementDetail />} />
       <Route path="/create" element={<CreateRequirement />} />
       <Route path="/analytics" element={<Analytics />} />
@@ -22,5 +24,8 @@ export default function App() {
     </Routes>
   )
 }
+
+
+
 
 
